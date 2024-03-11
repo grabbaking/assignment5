@@ -1,0 +1,41 @@
+# Clone the repository
+git clone https://github.com/grabbaking/Assignment5.git
+
+# Move into the repository directory
+cd Assignment5
+
+# Create and switch to the 'development' branch
+git checkout -b development
+
+# Create the data.txt file
+echo "This is sample data for the container." > data.txt
+
+# Create the Containerfile
+cat <<EOF > Containerfile
+# Builder stage
+FROM alpine AS builder
+COPY data.txt /tmp/data.txt
+
+# Final stage
+FROM fedora
+COPY --from=builder /tmp/data.txt /
+
+EOF
+
+# Build the container image
+podman build -t storage-exercise .
+
+# Add, commit, and push changes to GitHub
+git add .
+git commit -m "Added data.txt and Containerfile"
+git push origin development
+
+# Verify branches
+git branch
+
+# Switch back to the main branch
+git checkout main
+
+# Merge the changes from development into the main branch
+git merge development
+git push origin main
